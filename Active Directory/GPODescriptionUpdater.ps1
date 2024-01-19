@@ -8,7 +8,7 @@ foreach ($gpo in $gpos) {
     # Display the name of the current GPO
     Write-Host "GPO: $($gpo.DisplayName)"
 
-    # Display current description (if any)
+    # Display the current description (if any)
     Write-Host "Current Description: $($gpo.Description)"
 
     # Prompt for a new description
@@ -16,9 +16,14 @@ foreach ($gpo in $gpos) {
 
     # Check if a description was entered
     if ($newDescription -ne "") {
-        # Set the new description
-        Set-GPO -Guid $gpo.Id -Comment $newDescription
-        Write-Host "Description updated."
+        try {
+            # Set the new description
+            $gpo.Description = $newDescription
+            $gpo.Save()
+            Write-Host "Description updated."
+        } catch {
+            Write-Host "Error updating the description: $_"
+        }
     } else {
         Write-Host "No change made."
     }
